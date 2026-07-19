@@ -1,0 +1,15 @@
+[project]
+name = "aiready"
+version = "0.1.0"
+description = "Strict SkillsBench-style benchmark workspace"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "harbor @ git+https://github.com/laude-institute/harbor.git",
+]
+
+[tool.setuptools.packages.find]
+include = [
+    "agents*",
+    "environments*",
+]

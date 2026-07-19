@@ -1,0 +1,10 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.py[cod]
+
+agent_experiments/dist/
+agent_experiments/aiready/
+agent_experiments/runs/
+agent_experiments/runtime-state/

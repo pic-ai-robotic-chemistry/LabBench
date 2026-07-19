@@ -1,0 +1,18 @@
+# Experimental Codex config mounted at runtime.
+# This file is intended for a clean experiment-only CODEX_HOME.
+# Do not commit real credentials. Keep the provider definition minimal.
+#
+# The default template below uses a neutral custom provider placeholder.
+# Keep the same shape when you point it at your own model endpoint:
+# - model_provider: custom provider id
+# - model: full model id used in the experiment
+# - model_providers.<id>.base_url/env_key/wire_api: provider connection info
+
+model_provider = "aiready-compatible"
+model = "replace-with-codex-compatible-model"
+
+[model_providers.aiready-compatible]
+name = "AIREADY Compatible"
+base_url = "https://replace-with-compatible-endpoint/v1"
+env_key = "AIREADY_SCORING_JUDGE_A_API_KEY"
+wire_api = "responses"
