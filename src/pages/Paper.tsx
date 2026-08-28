@@ -43,6 +43,7 @@ import {
 } from '@/data/paperData'
 
 const maxN10 = Math.max(...leaderboard.map((row) => row.n10))
+const assetPath = (name: string) => `${import.meta.env.BASE_URL}assets/${name}`
 
 const navItems = [
   { href: '#overview', label: 'Overview' },
@@ -180,7 +181,7 @@ export default function Paper() {
             </SectionHeading>
             <div className="platform-grid">
               <figure className="figure-frame figure-platform">
-                <img src="/assets/main-figure-1.png" alt="Skills library and robotic chemistry laboratory architecture" />
+                <img src={assetPath('main-figure-1.png')} alt="Skills library and robotic chemistry laboratory architecture" />
                 <figcaption><span>Fig. 1</span> Skills library, orchestration layer and robotic chemistry laboratory capability abstraction.</figcaption>
               </figure>
               <div className="skill-grid">
@@ -306,11 +307,11 @@ export default function Paper() {
 
             <div className="figure-gallery">
               <figure className="figure-frame">
-                <img src="/assets/main-figure-2.png" alt="Benchmark task and workflow validation schematic" loading="lazy" />
+                <img src={assetPath('main-figure-2.png')} alt="Benchmark task and workflow validation schematic" loading="lazy" />
                 <figcaption><span>Fig. 2</span> Task parsing, skill selection, workflow validation and dispatch boundary.</figcaption>
               </figure>
               <figure className="figure-frame">
-                <img src="/assets/main-figure-3.png" alt="Scoring rubric and configuration results" loading="lazy" />
+                <img src={assetPath('main-figure-3.png')} alt="Scoring rubric and configuration results" loading="lazy" />
                 <figcaption><span>Fig. 3</span> Scoring definitions and the observed harness–model configuration matrix.</figcaption>
               </figure>
             </div>
@@ -378,7 +379,7 @@ export default function Paper() {
               <div className="adaptation-panel adaptation-positive"><div className="adaptation-title"><Check size={17} /> Local adjustments observed</div><ul>{closedLoop.adapted.map((item) => <li key={item}>{item}</li>)}</ul></div>
               <div className="adaptation-panel adaptation-negative"><div className="adaptation-title"><ArrowDownRight size={17} /> Not observed</div><ul>{closedLoop.notObserved.map((item) => <li key={item}>{item}</li>)}</ul></div>
             </div>
-            <figure className="figure-frame loop-figure"><img src="/assets/main-figure-4.png" alt="Five-round open-ended catalyst development trajectory" loading="lazy" /><figcaption><span>Fig. 4</span> Open-ended discovery task: planning scope, formulation changes and returned evidence across rounds.</figcaption></figure>
+            <figure className="figure-frame loop-figure"><img src={assetPath('main-figure-4.png')} alt="Five-round open-ended catalyst development trajectory" loading="lazy" /><figcaption><span>Fig. 4</span> Open-ended discovery task: planning scope, formulation changes and returned evidence across rounds.</figcaption></figure>
           </div>
         </section>
 

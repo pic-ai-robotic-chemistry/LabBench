@@ -162,9 +162,9 @@ export const leaderboard: LeaderboardRow[] = [
   { rank: 1, harness: 'Claude Code', model: 'Opus 4.7', org: 'Anthropic', weights: 'closed', trials: 96, dispatches: 50, executable: 27, n10: 28.1 },
   { rank: 2, harness: 'Codex', model: 'GPT 5.5', org: 'OpenAI', weights: 'closed', trials: 96, dispatches: 45, executable: 19, n10: 19.8 },
   { rank: 3, harness: 'Hermes', model: 'GPT 5.5', org: 'OpenAI', weights: 'closed', trials: 96, dispatches: 33, executable: 16, n10: 16.7 },
-  { rank: 4, harness: 'Hermes', model: 'Qwen3.7 Max', org: 'Alibaba', weights: 'open', trials: 96, dispatches: 20, executable: 9, n10: 9.4 },
+  { rank: 4, harness: 'Hermes', model: 'Qwen3.7 Max', org: 'Alibaba', weights: 'closed', trials: 96, dispatches: 20, executable: 9, n10: 9.4 },
   { rank: 5, harness: 'OpenClaw', model: 'Gemini 3.5 Flash', org: 'Google', weights: 'closed', trials: 96, dispatches: 23, executable: 8, n10: 8.3 },
-  { rank: 6, harness: 'OpenClaw', model: 'Qwen3.7 Max', org: 'Alibaba', weights: 'open', trials: 96, dispatches: 41, executable: 7, n10: 7.3 },
+  { rank: 6, harness: 'OpenClaw', model: 'Qwen3.7 Max', org: 'Alibaba', weights: 'closed', trials: 96, dispatches: 41, executable: 7, n10: 7.3 },
   { rank: 7, harness: 'Hermes', model: 'GLM 5.1', org: 'Zhipu', weights: 'open', trials: 96, dispatches: 12, executable: 6, n10: 6.3 },
   { rank: 8, harness: 'Kilo Code', model: 'Gemini 3.5 Flash', org: 'Google', weights: 'closed', trials: 96, dispatches: 33, executable: 5, n10: 5.2 },
 ]

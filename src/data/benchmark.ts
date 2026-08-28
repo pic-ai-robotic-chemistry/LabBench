@@ -150,9 +150,9 @@ export const leaderboard: LeaderboardRow[] = [
   { rank: 1, harness: 'Claude Code', model: 'Claude Opus 4.7', org: 'Anthropic', weights: 'closed', trials: 96, executable: 27, n10: 28.1 },
   { rank: 2, harness: 'Codex', model: 'GPT 5.5', org: 'OpenAI', weights: 'closed', trials: 96, executable: 19, n10: 19.8 },
   { rank: 3, harness: 'Hermes', model: 'GPT 5.5', org: 'OpenAI', weights: 'closed', trials: 96, executable: 15, n10: 15.7 },
-  { rank: 4, harness: 'Hermes', model: 'Qwen3.7 Max', org: 'Alibaba', weights: 'open', trials: 96, executable: 9, n10: 9.4 },
+  { rank: 4, harness: 'Hermes', model: 'Qwen3.7 Max', org: 'Alibaba', weights: 'closed', trials: 96, executable: 9, n10: 9.4 },
   { rank: 5, harness: 'OpenClaw', model: 'Gemini 3.5 Flash', org: 'Google', weights: 'closed', trials: 96, executable: 8, n10: 8.3 },
-  { rank: 6, harness: 'OpenClaw', model: 'Qwen3.7 Max', org: 'Alibaba', weights: 'open', trials: 96, executable: 7, n10: 7.3 },
+  { rank: 6, harness: 'OpenClaw', model: 'Qwen3.7 Max', org: 'Alibaba', weights: 'closed', trials: 96, executable: 7, n10: 7.3 },
   { rank: 7, harness: 'Hermes', model: 'GLM 5.1', org: 'Zhipu', weights: 'open', trials: 96, executable: 6, n10: 6.3 },
   { rank: 8, harness: 'Kimi Code', model: 'Gemini 3.5 Flash', org: 'Google', weights: 'closed', trials: 96, executable: 5, n10: 5.2 },
 ];
@@ -168,8 +168,8 @@ export interface WeightsAvgRow {
 }
 
 export const weightsAvg: WeightsAvgRow[] = [
-  { group: 'Closed-weight models', value: 15.4, n: 5 },
-  { group: 'Open-weight models', value: 7.7, n: 3 },
+  { group: 'Closed-weight models', value: 13.4, n: 7 },
+  { group: 'Open-weight models', value: 6.3, n: 1 },
 ];
 
 export const weightsAvgCaption: string = 'Mean N10 yield across the top-8 configurations shown.';

@@ -203,8 +203,8 @@ button { font: inherit; }
 .table-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin: 64px 0 17px; }
 .table-heading h3 { margin: 7px 0 0; font-size: 20px; font-weight: 650; }
 .table-chip { padding: 6px 9px; border: 1px solid #dfe1e4; border-radius: 4px; color: #7b8188; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; white-space: nowrap; }
-.table-frame { overflow: hidden; border: 1px solid #dfe1e4; border-radius: 6px; background: #fff; }
-.table-scroll { overflow-x: auto; }
+.table-frame { width: 100%; overflow: hidden; border: 1px solid #dfe1e4; border-radius: 6px; background: #fff; }
+.table-scroll { width: 100%; overflow-x: auto; }
 table { width: 100%; min-width: 760px; border-collapse: collapse; }
 th { padding: 13px 15px; border-bottom: 1px solid #e1e3e5; color: #8b9097; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; font-weight: 500; text-align: left; white-space: nowrap; }
 td { padding: 14px 15px; border-bottom: 1px solid #eceeef; color: #343940; font-size: 12px; vertical-align: middle; white-space: nowrap; }
@@ -221,7 +221,7 @@ td > strong { font-weight: 650; }
 .weight-closed { background: #eef0f1; color: #656b72; }
 .yield-cell { color: #17191d; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; font-weight: 650; }
 .row-best .yield-cell { color: #16774c; }
-.table-caption { margin: 0; padding: 15px; border-top: 1px solid #eceeef; color: #858b92; font-size: 10px; line-height: 1.55; }
+.table-caption { display: block; width: 100%; margin: 0; padding: 15px; border-top: 1px solid #eceeef; color: #858b92; font-size: 10px; line-height: 1.55; }
 .figure-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 46px; }
 
 .horizon-grid { display: grid; grid-template-columns: .7fr 1.3fr; gap: 70px; align-items: center; }
