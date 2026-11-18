@@ -1,0 +1,15 @@
+# Offline analysis, diagnostic plots and preparation validation (Python 3.11).
+numpy==2.0.2
+matplotlib==3.9.4
+contourpy==1.3.0
+cycler==0.12.1
+fonttools==4.60.2
+kiwisolver==1.4.7
+packaging==26.2
+pillow==11.3.0
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+six==1.15.0
+importlib-resources==6.5.2
+zipp==3.23.1
+PyYAML==6.0.3

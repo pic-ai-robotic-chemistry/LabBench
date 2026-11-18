@@ -1,0 +1,35 @@
+{
+    "MethodFile": "",
+    "InstrumentID": "1",
+    "INJParam": {
+        "LineNo": "0",
+        "Temp": "250",
+        "SplitMode": "0",
+        "SamplingTime": "1",
+        "FlowControlMode": "1",
+        "InitPress": null,
+        "InitFlow": null,
+        "ColumnFlow": null,
+        "LinearV": "20.0",
+        "InitPurgeFlow": "3.0",
+        "SplitRatio": "50"
+    },
+    "OvenParam": {
+        "Temp": "60",
+        "EqTime": "3.0",
+        "ColumnOvenSets": [
+            {
+                "Rate": "15",
+                "FinalTemp": "200",
+                "HoldTime": "2.0"
+            }
+        ]
+    },
+    "DetParam": {
+        "nLine": "0",
+        "nDet": "0",
+        "Temp": "270",
+        "SamplingRate": "40",
+        "StopTime": null
+    }
+}

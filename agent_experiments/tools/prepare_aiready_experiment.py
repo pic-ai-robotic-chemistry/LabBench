@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import csv
+import hashlib
 import json
 import os
 import re
@@ -117,15 +119,24 @@ HARNESSES = (
     "kilo-code",
 )
 
-MODEL_ENV_KEYS = {
-    "model_a": "MODEL_A",
-}
+MODEL_KEYS = (
+    "model_a",
+    "claude47opus_or",
+    "deepseek_v4_bailian",
+    "deepseek_v4pro_direct",
+    "gemini35flash_or",
+    "glm51_bailian",
+    "gpt55_or",
+    "kimi_k26",
+    "mimo_v25_pro_xiaomi",
+    "minimax_m27",
+    "qwen37max_bailian",
+)
+MODEL_ENV_KEYS = {key: key.upper() for key in MODEL_KEYS}
 
 DIRECT_API_KEY_ENV_MATRIX: dict[tuple[str, str], str] = {}
 
-HUMAN_MODEL_LABELS = {
-    "model_a": "model-a",
-}
+HUMAN_MODEL_LABELS = {key: key.replace("_", "-") for key in MODEL_KEYS}
 
 HARNESS_ENV_PREFIXES = {
     "claude-code": "CLAUDE_CODE",
@@ -150,14 +161,15 @@ V14_NA_CONFIGS: set[tuple[str, str]] = set()
 V15_NA_CONFIGS: set[tuple[str, str]] = set()
 
 MODELS = {
-    "model_a": {
-        "model_name": "${AIREADY_MODEL_A_NAME}",
+    key: {
+        "model_name": "${AIREADY_" + env_key + "_NAME}",
         "provider": "openai-compatible",
         "provider_label": "config-model",
-        "base_url_env": "AIREADY_MODEL_A_BASE_URL",
-        "anthropic_base_url_env": "AIREADY_MODEL_A_ANTHROPIC_BASE_URL",
-        "gemini_base_url_env": "AIREADY_MODEL_A_GEMINI_BASE_URL",
-    },
+        "base_url_env": f"AIREADY_{env_key}_BASE_URL",
+        "anthropic_base_url_env": f"AIREADY_{env_key}_ANTHROPIC_BASE_URL",
+        "gemini_base_url_env": f"AIREADY_{env_key}_GEMINI_BASE_URL",
+    }
+    for key, env_key in MODEL_ENV_KEYS.items()
 }
 
 CODEX_SUPPORTED_MODELS = set(MODELS)
@@ -217,6 +229,28 @@ def unsupported_config_reason(harness: str, model_key: str) -> str | None:
     if harness not in HARNESSES:
         return f"unsupported public harness: {harness}"
     return None
+
+
+def load_pairings(path: Path) -> list[dict[str, str]]:
+    """Load explicit observed pairings without adding unobserved combinations."""
+    with path.open(encoding="utf-8-sig", newline="") as stream:
+        reader = csv.DictReader(stream)
+        required = {"config_key", "harness", "source_model_key", "analysis_model_key"}
+        if not required.issubset(reader.fieldnames or []):
+            raise ValueError(f"Pairings must contain {sorted(required)}")
+        rows = list(reader)
+    if not rows:
+        raise ValueError("Pairings file is empty")
+    seen = set()
+    for row in rows:
+        harness, model = row["harness"], row["source_model_key"]
+        if reason := unsupported_config_reason(harness, model):
+            raise ValueError(reason)
+        key = f"{harness}__{model}"
+        if row["config_key"] != key or key in seen or not row["analysis_model_key"]:
+            raise ValueError(f"Invalid or duplicate pairing: {row}")
+        seen.add(key)
+    return rows
 
 
 def model_name_for_harness(harness: str, model_entry: dict[str, Any]) -> str:
@@ -297,8 +331,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--benchmark-version", default=BENCHMARK_VERSION)
     parser.add_argument("--source-docx", type=Path, default=BENCHMARK_SOURCE_DOCX)
     parser.add_argument("--task-ids", nargs="+", default=list(DEFAULT_TASK_IDS))
-    parser.add_argument("--harnesses", nargs="+", choices=HARNESSES, default=list(HARNESSES))
-    parser.add_argument("--models", nargs="+", choices=list(MODELS), default=list(MODELS))
+    parser.add_argument("--harnesses", nargs="+", choices=HARNESSES)
+    parser.add_argument("--models", nargs="+", choices=list(MODELS))
+    parser.add_argument(
+        "--pairings", type=Path,
+        help="Explicit pairing CSV; mutually exclusive with --harnesses and --models.",
+    )
     parser.add_argument(
         "--skill-variants",
         nargs="+",
@@ -349,7 +387,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--environment-cpus", type=int, default=2)
     parser.add_argument("--environment-memory-mb", type=int, default=12288)
     parser.add_argument("--environment-storage-mb", type=int, default=20480)
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.pairings and (args.harnesses is not None or args.models is not None):
+        parser.error("--pairings cannot be combined with --harnesses or --models")
+    if args.n_attempts < 1:
+        parser.error("--n-attempts must be positive")
+    return args
 
 
 def reset_dir(path: Path) -> None:
@@ -950,8 +993,16 @@ def main() -> int:
     BENCHMARK_SOURCE_LABEL = str(args.source_docx)
     TASKS = load_tasks_from_docx(args.source_docx)
     selected_task_ids = list(args.task_ids)
-    selected_harnesses = list(args.harnesses)
-    selected_models = list(args.models)
+    if args.pairings:
+        pairings = load_pairings(args.pairings)
+    else:
+        pairings = [
+            dict(config_key=f"{h}__{m}", harness=h, source_model_key=m, analysis_model_key=m)
+            for h in (args.harnesses or HARNESSES)
+            for m in (args.models or ["model_a"])
+        ]
+    selected_harnesses = list(dict.fromkeys(row["harness"] for row in pairings))
+    selected_models = list(dict.fromkeys(row["source_model_key"] for row in pairings))
     selected_skill_variants = list(args.skill_variants)
     unknown = [task_id for task_id in selected_task_ids if task_id not in TASKS]
     if unknown:
@@ -1021,41 +1072,30 @@ def main() -> int:
 
     config_paths: list[str] = []
     skipped_configs: list[dict[str, str]] = []
-    for harness in selected_harnesses:
-        for model_key in selected_models:
-            if reason := unsupported_config_reason(harness, model_key):
-                for skill_variant in selected_skill_variants:
-                    skipped_configs.append(
-                        {
-                            "harness": harness,
-                            "model_key": model_key,
-                            "skill_variant": skill_variant,
-                            "reason": reason,
-                        }
-                    )
-                continue
-            for skill_variant in selected_skill_variants:
-                dataset_path = prebuilt_root / harness / skill_variant
-                config_dir = configs_root / harness / model_key
-                config_dir.mkdir(parents=True, exist_ok=True)
-                job_name = f"{args.job_name_prefix}-{harness}-{model_key}-{skill_variant}"
-                config_path = config_dir / f"{skill_variant}.yaml"
-                write_text(
-                    config_path,
-                    render_config(
-                        job_name=job_name,
-                        jobs_dir=args.jobs_dir,
-                        n_attempts=args.n_attempts,
-                        n_concurrent_trials=args.n_concurrent_trials,
-                        dataset_path=dataset_path,
-                        harness=harness,
-                        model_key=model_key,
-                        agent_timeout_sec=args.agent_timeout_sec,
-                        instruction_style=args.instruction_style,
-                        output_contract_mode=args.output_contract_mode,
-                    ),
-                )
-                config_paths.append(str(config_path))
+    for pairing in pairings:
+        harness, model_key = pairing["harness"], pairing["source_model_key"]
+        for skill_variant in selected_skill_variants:
+            dataset_path = prebuilt_root / harness / skill_variant
+            config_dir = configs_root / harness / model_key
+            config_dir.mkdir(parents=True, exist_ok=True)
+            job_name = f"{args.job_name_prefix}-{harness}-{model_key}-{skill_variant}"
+            config_path = config_dir / f"{skill_variant}.yaml"
+            write_text(
+                config_path,
+                render_config(
+                    job_name=job_name,
+                    jobs_dir=args.jobs_dir,
+                    n_attempts=args.n_attempts,
+                    n_concurrent_trials=args.n_concurrent_trials,
+                    dataset_path=dataset_path,
+                    harness=harness,
+                    model_key=model_key,
+                    agent_timeout_sec=args.agent_timeout_sec,
+                    instruction_style=args.instruction_style,
+                    output_contract_mode=args.output_contract_mode,
+                ),
+            )
+            config_paths.append(str(config_path))
 
     write_json(
         args.out_root / "manifest.json",
@@ -1071,6 +1111,9 @@ def main() -> int:
             "skill_variants": selected_skill_variants,
             "harnesses": selected_harnesses,
             "models": {model_key: MODELS[model_key] for model_key in selected_models},
+            "pairings": pairings,
+            "pairings_sha256": hashlib.sha256(args.pairings.read_bytes()).hexdigest() if args.pairings else None,
+            "n_attempts": args.n_attempts,
             "registry_prefix": args.registry_prefix,
             "image_tag": args.image_tag,
             "jobs_dir": str(args.jobs_dir.resolve()),

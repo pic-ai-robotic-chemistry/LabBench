@@ -2,6 +2,8 @@
 
 `experiment/` provides the public workflow entrypoint for preparing, running, collecting, scoring, and packaging AIREADY experiments. The scripts in this directory call the lower-level modules under `tools/`, `agents/`, `environments/`, and `images/` in a reproducible order.
 
+For recomputing the reported analysis and preparing the paper cohort, start with the [main README](../README.md).
+
 ## Directory Contents
 
 ```text
@@ -59,13 +61,9 @@ The smoke profile is intended for quick end-to-end validation:
 
 ### `profiles/aiready-v15-full.env`
 
-The full profile expands the V15 benchmark matrix:
+The full profile uses `reproduction/frozen/data/pairings.csv` as an explicit list of 48 observed harness/model pairings, all 32 V15 tasks, skill snapshot `aiready-skill-7.6` and `N_ATTEMPTS=3` (4,608 assigned trials). When `PAIRINGS_CSV` is set, it defines the matrix in place of `HARNESSES` and `MODELS`.
 
-- task groups: A, B, C, D, E, F, and G tasks configured in the profile.
-- harnesses: the package supports `claude-code`, `codex`, `gemini-cli`, `hermes`, `kilo-code`, and `openclaw`. The public full profile starts with OpenClaw as a conservative baseline; edit `HARNESSES` to expand the harness matrix.
-- models: the public baseline uses `model_a`; add aliases in `tools/prepare_aiready_experiment.py` and list them in `MODELS` to expand the matrix.
-- skill: `aiready-skill-7.6`.
-- scoring: enabled.
+Generic scoring is disabled in this profile. The [main README](../README.md) describes the manuscript scoring rules and the retained-record analysis. Use the smoke profile for the generic `judge_a` scoring examples.
 
 ## Environment Setup
 
@@ -160,7 +158,7 @@ runs/smoke-a01-scored/analysis/scoring/per_trial_overall_scores.csv
 ## Full V15 Run
 
 ```bash
-bash experiment/bin/aiready_workflow.sh all-with-scoring \
+bash experiment/bin/aiready_workflow.sh all \
   --profile experiment/profiles/aiready-v15-full.env \
   --run-label v15-full-$(date +%Y%m%d-%H%M%S)
 ```
@@ -173,7 +171,7 @@ Before running the full profile, review:
 - `N_CONCURRENT_TRIALS`
 - `AGENT_TIMEOUT_SEC`
 - `DISPATCH_STATS_MODE`
-- scoring judge and dimension settings
+- provider model IDs and endpoint variables referenced by the generated configs
 
 ## Resume By Stage
 
@@ -192,10 +190,9 @@ bash experiment/bin/aiready_workflow.sh collect \
   --profile experiment/profiles/aiready-v15-full.env \
   --run-label v15-full
 
-bash experiment/bin/aiready_workflow.sh score-aggregate \
-  --profile experiment/profiles/aiready-v15-full.env \
-  --run-label v15-full
 ```
+
+Generic scoring commands use the smoke profile. For reported-result analysis, follow the [main README](../README.md).
 
 ## Stage Details
 
@@ -379,7 +376,7 @@ Select models:
 MODELS="model_a"
 ```
 
-Select the locally supplied skill:
+Select the bundled skill:
 
 ```bash
 SKILL_VARIANTS="aiready-skill-7.6"

@@ -1,0 +1,19 @@
+{
+  "BatchFile": "",
+  "InstrumentID": 1,
+  "BatchDatas": [
+    {
+      "TrayNo": "1",
+      "VialNo": "9",
+      "Injvol": 10,
+      "SampleName": "1",
+      "SampleID": "1",
+      "SampleType": 1,
+      "LevelNo": 1,
+      "MethodFileName": "",
+      "DataFileName": "1",
+      "OutputReport": 0,
+      "ReportFileName": ""
+    }
+  ]
+}

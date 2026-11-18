@@ -1,0 +1,89 @@
+{
+    "MethodFile": "",
+    "InstrumentID": 1,
+    "PumpParameters": {
+        "PumpConstParam": {
+            "PumpMode": "3",
+            "PumpAPmax": "20",
+            "PumpAPmin": "0",
+            "PumpAFlow": "1.0",
+            "PumpAReachTime": "0",
+            "PumpBConc": "40",
+            "PumpCConc": "0",
+            "PumpDConc": "0"
+        },
+        "GradientProgram": [
+            {
+                "Time": "8",
+                "AFlow": "1.0",
+                "PumpBConc": "75",
+                "PumpCConc": "0",
+                "PumpDConc": "0"
+            },
+            {
+                "Time": "13",
+                "AFlow": "1.0",
+                "PumpBConc": "85",
+                "PumpCConc": "0",
+                "PumpDConc": "0"
+            },
+            {
+                "Time": "24",
+                "AFlow": "1.0",
+                "PumpBConc": "40",
+                "PumpCConc": "0",
+                "PumpDConc": "0"
+            }
+        ],
+        "Mobilephase": {
+            "PumpAName": "PA1",
+            "PumpA_BName": "PA2",
+            "PumpA_CName": "PA3",
+            "PumpA_DName": "PA4",
+            "UsePumpAcompress": "1",
+            "PumpAcompress": "0.45",
+            "PumpA_Bcompress": "1.2",
+            "PumpA_Ccompress": "1.25",
+            "PumpA_Dcompress": "1.20"
+        },
+        "GradientStart": {
+            "Mode": "0",
+            "DelayVolume": "0"
+        },
+        "PumpPurge": {
+            "UsePumpPurg": "1",
+            "PumpInitTime": "5",
+            "UsePumpInit": "0",
+            "PumpPurgeSets": [
+                {
+                    "PumpType": "1",
+                    "MobilephaseType": "1",
+                    "Time": "6"
+                }
+            ]
+        }
+    },
+    "OvenParameters": {
+        "OvenTemp": "35",
+        "UseOven": "1",
+        "UseOvenFCVL": "1",
+        "UseOvenFCVR": "1"
+    },
+    "SILParameters": {
+        "MeasureflowTime": "10",
+        "CleanPortTime": "10",
+        "UseSILPurg": "1"
+    },
+    "CollectTimes": {
+        "PDAStartTime": "0",
+        "PDAEndTime": "25",
+        "LCStopTime": "25"
+    },
+    "PDAParameters": {
+        "PDALamp": "1",
+        "PDAStWave": "190",
+        "PDAEdWave": "400",
+        "PDAUseTemp": "1",
+        "PDATemp": "40"
+    }
+}

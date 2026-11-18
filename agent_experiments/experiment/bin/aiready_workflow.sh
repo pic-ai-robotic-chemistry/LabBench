@@ -111,13 +111,21 @@ bootstrap() {
 }
 
 activate_runtime() {
-  if [[ ! -x ".venv/bin/python" ]]; then
-    bootstrap
+  if [[ "${COMMAND}" == "prepare" ]]; then
+    # Preparation only needs Python and PyYAML. Use the active environment
+    # without installing Harbor or loading laboratory/registry credentials.
+    if [[ -x ".venv/bin/python" && -z "${VIRTUAL_ENV:-}" ]]; then
+      source .venv/bin/activate
+    fi
+  else
+    if [[ ! -x ".venv/bin/python" ]]; then
+      bootstrap
+    fi
+    # shellcheck disable=SC1091
+    source .venv/bin/activate
+    # shellcheck disable=SC1091
+    source tools/formal_env.sh
   fi
-  # shellcheck disable=SC1091
-  source .venv/bin/activate
-  # shellcheck disable=SC1091
-  source tools/formal_env.sh
   load_profile
 
   if [[ -n "${RUN_LABEL_ARG}" ]]; then
@@ -162,6 +170,7 @@ activate_runtime() {
   # SKILL_VARIANTS; do not edit generated tasks by hand.
   SKILL_VARIANTS="${SKILL_VARIANTS:-aiready-skill-7.6}"
   MODELS="${MODELS:-model_a}"
+  PAIRINGS_CSV="${PAIRINGS_CSV:-}"
   TASK_IDS="${TASK_IDS:-A01}"
   BUILD_TIMEOUT_SEC="${BUILD_TIMEOUT_SEC:-1800}"
   DOCKER_BUILD_MAX_ATTEMPTS="${DOCKER_BUILD_MAX_ATTEMPTS:-2}"
@@ -309,10 +318,17 @@ PY
 prepare_stage() {
   activate_runtime
   local extra_args=()
+  local matrix_args=()
   local item
   for item in ${EXTRA_SKILL_VARIANTS}; do
     extra_args+=(--extra-skill-variant "${item}")
   done
+  if [[ -n "${PAIRINGS_CSV}" ]]; then
+    matrix_args+=(--pairings "${PAIRINGS_CSV}")
+  else
+    # shellcheck disable=SC2206
+    matrix_args=(--harnesses ${HARNESSES} --models ${MODELS})
+  fi
 
   run_logged python3 tools/runtime_progress.py start \
     --scope publish \
@@ -329,8 +345,7 @@ prepare_stage() {
     --benchmark-version "${BENCHMARK_VERSION}" \
     --source-docx "${SOURCE_DOCX}" \
     --task-ids ${TASK_IDS} \
-    --harnesses ${HARNESSES} \
-    --models ${MODELS} \
+    "${matrix_args[@]}" \
     --skill-variants ${SKILL_VARIANTS} \
     ${extra_args[@]+"${extra_args[@]}"} \
     --registry-prefix "${REGISTRY_PREFIX}" \
@@ -597,6 +612,18 @@ status_stage() {
   activate_runtime
   python3 tools/runtime_progress.py show --scope "${STATUS_SCOPE:-all}" --format "${STATUS_FORMAT:-text}"
 }
+
+# Honour the profile before any installation or execution. The paper profile
+# uses the retained-record estimator rather than the generic judge_a stages.
+case "${COMMAND}" in
+  score|score-prepare|score-build|score-run|score-aggregate|all-with-scoring)
+    load_profile
+    if [[ "${SCORING_ENABLED:-0}" != "1" ]]; then
+      echo "Generic scoring is disabled by ${PROFILE}. See README.md for the paper analysis." >&2
+      exit 2
+    fi
+    ;;
+esac
 
 case "${COMMAND}" in
   bootstrap)

@@ -179,15 +179,14 @@ def resolve_final_plan(trial_dir: Path) -> Path | None:
 
 
 def compact_json_text(path: Path, *, max_chars: int = 120_000) -> tuple[str, bool]:
-    raw = path.read_text(encoding="utf-8", errors="replace")
-    truncated = len(raw) > max_chars
-    if truncated:
-        raw = raw[:max_chars] + "\n/* TRUNCATED_BY_SCORING_PREP */\n"
-    try:
-        payload = json.loads(raw) if not truncated else None
-    except json.JSONDecodeError:
-        return raw, truncated
-    return json.dumps(payload, ensure_ascii=False, indent=2), truncated
+    raw = path.read_text(encoding="utf-8", errors="strict")
+    payload = json.loads(raw)
+    if not isinstance(payload, (dict, list)):
+        raise ValueError(f"Plan must be a JSON object or array: {path}")
+    rendered = json.dumps(payload, ensure_ascii=False, indent=2)
+    if max(len(raw), len(rendered)) > max_chars:
+        raise ValueError(f"Plan exceeds {max_chars} characters: {path}; refusing silent truncation")
+    return rendered, False
 
 
 def build_prompt(
@@ -316,9 +315,10 @@ def load_score(path: Path) -> dict:
     evidence = payload.get("evidence")
     if not isinstance(evidence, list) or not evidence:
         raise AssertionError("evidence must be a non-empty list")
-    if not all(isinstance(item, str) and item.strip() for item in evidence):
-        raise AssertionError("each evidence item must be a non-empty string")
-    allowed = {{"score", "reason", "evidence"}}
+    if not all((isinstance(item, str) and item.strip()) or
+               (isinstance(item, dict) and item) for item in evidence):
+        raise AssertionError("each evidence item must be a non-empty string or object")
+    allowed = {{"score", "reason", "evidence", "dimension", "confidence", "issues", "rule_audit"}}
     extra = set(payload) - allowed
     if extra:
         raise AssertionError(f"Score JSON contains unsupported keys: {{sorted(extra)}}")

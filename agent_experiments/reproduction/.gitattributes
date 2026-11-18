@@ -1,0 +1,3 @@
+# Preserve the exact bytes used by the frozen-input checksums on every platform.
+frozen/** -text
+reference/*.csv -text

@@ -1,0 +1,71 @@
+{
+  "BatchFile": "",
+  "InstrumentID": 1,
+  "BatchDatas": [
+    {
+      "TrayNo": "1",
+      "VialNo": "1",
+      "Injvol": 5,
+      "SampleName": "1",
+      "SampleID": "1",
+      "SampleType": 1,
+      "LevelNo": 1,
+      "MethodFileName": "",
+      "DataFileName": "0",
+      "OutputReport": 0,
+      "ReportFileName": ""
+    },
+    {
+      "TrayNo": "1",
+      "VialNo": "2",
+      "Injvol": 5,
+      "SampleName": "1",
+      "SampleID": "1",
+      "SampleType": 1,
+      "LevelNo": 1,
+      "MethodFileName": "",
+      "DataFileName": "1",
+      "OutputReport": 0,
+      "ReportFileName": ""
+    },
+    {
+      "TrayNo": "1",
+      "VialNo": "3",
+      "Injvol": 5,
+      "SampleName": "1",
+      "SampleID": "1",
+      "SampleType": 1,
+      "LevelNo": 1,
+      "MethodFileName": "",
+      "DataFileName": "2",
+      "OutputReport": 0,
+      "ReportFileName": ""
+    },
+    {
+      "TrayNo": "1",
+      "VialNo": "4",
+      "Injvol": 5,
+      "SampleName": "1",
+      "SampleID": "1",
+      "SampleType": 1,
+      "LevelNo": 1,
+      "MethodFileName": "",
+      "DataFileName": "3",
+      "OutputReport": 0,
+      "ReportFileName": ""
+    },
+    {
+      "TrayNo": "1",
+      "VialNo": "5",
+      "Injvol": 5,
+      "SampleName": "1",
+      "SampleID": "1",
+      "SampleType": 1,
+      "LevelNo": 1,
+      "MethodFileName": "",
+      "DataFileName": "solvent_IS",
+      "OutputReport": 0,
+      "ReportFileName": ""
+    }
+  ]
+}
